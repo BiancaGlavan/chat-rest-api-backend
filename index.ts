@@ -1,9 +1,19 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import app from './app';
+import mongoose from 'mongoose';
 
-const app = express();
-dotenv.config();
+const start = async () => {
+  if (!process.env.MONGO_DB_URL) {
+    console.log('MONGO_URL is not defined in the env file');
+    process.exit(1);
+  }
 
-app.listen(5000, () => {
-    console.log('Server started on port 5000');
-})
+  try {
+    await mongoose.connect(process.env.MONGO_DB_URL);
+    app.listen(process.env.PORT || 3000, () => console.log('App started'));
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+start();
